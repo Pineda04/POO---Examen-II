@@ -1,0 +1,22 @@
+meta {
+  name: DeleteCustomer
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{PATH}}/customers
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "firstName": "string",
+    "lastName": "string",
+    "email": "user@example.com",
+    "phoneNumber": "99284925",
+    "address": "string",
+    "dateOfBirth": "2024-07-27T01:38:18.692Z"
+  }
+}

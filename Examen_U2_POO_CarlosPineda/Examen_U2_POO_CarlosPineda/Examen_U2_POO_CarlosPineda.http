@@ -1,0 +1,6 @@
+@Examen_U2_POO_CarlosPineda_HostAddress = http://localhost:5068
+
+GET {{Examen_U2_POO_CarlosPineda_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
