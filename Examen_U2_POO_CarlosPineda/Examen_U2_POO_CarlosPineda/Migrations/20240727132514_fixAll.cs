@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Examen_U2_POO_CarlosPineda.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class fixAll : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,19 +16,17 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
 
             migrationBuilder.CreateTable(
                 name: "customers",
+                schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    identity_number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_customers", x => x.Id);
+                    table.PrimaryKey("PK_customers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -37,24 +35,25 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    identity_number = table.Column<Guid>(type: "uniqueidentifier", maxLength: 20, nullable: false),
+                    customer_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     loan_amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    commission_rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     interest_rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     term = table.Column<int>(type: "int", nullable: false),
                     disbursement_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     first_payment_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CustomerEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IdentityNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_loans", x => x.id);
                     table.ForeignKey(
-                        name: "FK_loans_customers_CustomerEntityId",
-                        column: x => x.CustomerEntityId,
+                        name: "FK_loans_customers_customer_id",
+                        column: x => x.customer_id,
+                        principalSchema: "dbo",
                         principalTable: "customers",
-                        principalColumn: "Id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,11 +63,17 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     loan_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    installment_number = table.Column<int>(type: "int", nullable: false),
                     payment_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    installment_amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    principal_paid = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    interest_paid = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    remaining_balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    days = table.Column<int>(type: "int", nullable: false),
+                    interest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    principal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    other_charges_svds = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    level_payment_without_svds = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    extraordinary_payment = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    level_payment_with_svds = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    principal_balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,10 +94,10 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                 column: "loan_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_loans_CustomerEntityId",
+                name: "IX_loans_customer_id",
                 schema: "dbo",
                 table: "loans",
-                column: "CustomerEntityId");
+                column: "customer_id");
         }
 
         /// <inheritdoc />
@@ -107,7 +112,8 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "customers");
+                name: "customers",
+                schema: "dbo");
         }
     }
 }

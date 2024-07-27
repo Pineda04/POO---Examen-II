@@ -1,40 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LoanAPI.Database.Entities
 {
-    [Table("customers")]
+    [Table("customers", Schema = "dbo")]
     public class CustomerEntity
     {
+        // Id
         [Key]
+        [Column("id")]
         public Guid Id { get; set; }
 
-        [Required]
+        // Nombre del Cliente
         [StringLength(100)]
-        public string FirstName { get; set; }
-
         [Required]
-        [StringLength(100)]
-        public string LastName { get; set; }
+        [Column("name")]
+        public string Name { get; set; }
 
+        // Numero de Identidad
+        [StringLength(20)]
         [Required]
-        [EmailAddress]
-        [StringLength(255)]
-        public string Email { get; set; }
+        [Column("identity_number")]
+        public string IdentityNumber { get; set; }
 
+        // Fecha de Creación
         [Required]
-        [Phone]
-        [StringLength(15)]
-        public string PhoneNumber { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
 
-        [StringLength(255)]
-        public string Address { get; set; }
-
-        [Required]
-        public DateTime DateOfBirth { get; set; }
-
-        public IEnumerable<LoanEntity> Loans { get; set; }
+        // Relación con los Prestamos
+        public virtual IEnumerable<LoanEntity> Loans { get; set; }
     }
 }

@@ -1,0 +1,24 @@
+meta {
+  name: EdtiLoans
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{PATH}}/loans/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "string",
+    "identityNumber": "string",
+    "loanAmount": 0,
+    "commissionRate": 0,
+    "interestRate": 0,
+    "term": 0,
+    "disbursementDate": "2024-07-27T13:36:25.570Z",
+    "firstPaymentDate": "2024-07-27T13:36:25.570Z"
+  }
+}

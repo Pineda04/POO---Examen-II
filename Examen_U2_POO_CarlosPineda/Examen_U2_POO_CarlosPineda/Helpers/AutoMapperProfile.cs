@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using LoanAPI.Database.Entities;
-using LoanAPI.Dtos.Customers;
-using LoanAPI.Dtos.Loans;
-using Examen_U2_POO_CarlosPineda.Dtos.AmortizationSchedules;
-using Examen_U2_POO_CarlosPineda.Dtos.Customers;
-using Examen_U2_POO_CarlosPineda.Dtos.Loans;
-using LoanAPI.Dtos;
+using LoanAPI.DTOs;
 
 namespace LoanAPI.Helpers
 {
@@ -23,28 +18,23 @@ namespace LoanAPI.Helpers
             MapsForCustomers();
         }
 
-        // Mapper de Préstamos
         private void MapsForLoans()
         {
-            CreateMap<LoanEntity, LoanDto>();
+            CreateMap<LoanEntity, LoanDto>()
+                .ForMember(dest => dest.AmortizationSchedule, opt => opt.MapFrom(src => src.AmortizationSchedule));
             CreateMap<LoanCreateDto, LoanEntity>();
-            CreateMap<LoanEditDto, LoanEntity>();
         }
 
-        // Mapper de Amortizaciones
         private void MapsForAmortizations()
         {
             CreateMap<AmortizationScheduleEntity, AmortizationScheduleDto>();
-            CreateMap<AmortizationScheduleCreateDto, AmortizationScheduleEntity>();
-            CreateMap<AmortizationScheduleEditDto, AmortizationScheduleEntity>();
         }
 
-        // Mapper de Clientes
         private void MapsForCustomers()
         {
-            CreateMap<CustomerEntity, CustomerDto>();
+            CreateMap<CustomerEntity, CustomerDto>()
+                .ForMember(dest => dest.Loans, opt => opt.MapFrom(src => src.Loans));
             CreateMap<CustomerCreateDto, CustomerEntity>();
-            CreateMap<CustomerEditDto, CustomerEntity>();
         }
     }
 }

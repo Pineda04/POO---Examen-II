@@ -1,6 +1,6 @@
-﻿using LoanAPI.Dtos.Customers;
-using Examen_U2_POO_CarlosPineda.Dtos.Common;
+﻿using Examen_U2_POO_CarlosPineda.Dtos.Common;
 using Examen_U2_POO_CarlosPineda.Dtos.Customers;
+using LoanAPI.DTOs;
 
 namespace LoanAPI.Services.Interfaces
 {
@@ -15,5 +15,7 @@ namespace LoanAPI.Services.Interfaces
         Task<ResponseDto<CustomerDto>> EditAsync(CustomerEditDto dto, Guid id);
 
         Task<ResponseDto<CustomerDto>> DeleteAsync(Guid id);
+
+        Task<ResponseDto<CustomerDto>> GetCustomerWithLoansAndAmortizationAsync(Guid customerId);
     }
 }

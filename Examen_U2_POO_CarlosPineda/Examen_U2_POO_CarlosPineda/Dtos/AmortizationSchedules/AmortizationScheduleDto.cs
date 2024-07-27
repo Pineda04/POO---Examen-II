@@ -1,19 +1,23 @@
-﻿namespace LoanAPI.Dtos
+﻿namespace LoanAPI.DTOs
 {
     public class AmortizationScheduleDto
     {
-        public Guid Id { get; set; }
-
-        public Guid LoanId { get; set; }
+        public int InstallmentNumber { get; set; }
 
         public DateTime PaymentDate { get; set; }
 
-        public decimal InstallmentAmount { get; set; }
+        public int Days { get; set; }
 
-        public decimal PrincipalPaid { get; set; }
+        public decimal Interest { get; set; }
 
-        public decimal InterestPaid { get; set; }
+        public decimal Principal { get; set; }
 
-        public decimal RemainingBalance { get; set; }
+        public decimal LevelPaymentWithoutSVSD { get; set; }
+
+        public decimal ExtraordinaryPayment { get; set; }
+
+        public decimal LevelPaymentWithSVSD { get; set; }
+
+        public decimal PrincipalBalance { get; set; }
     }
 }

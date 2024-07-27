@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Examen_U2_POO_CarlosPineda.Migrations
 {
     [DbContext(typeof(ExamenU2Context))]
-    [Migration("20240727013127_init")]
-    partial class init
+    [Migration("20240727132514_fixAll")]
+    partial class fixAll
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,29 +32,53 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    b.Property<decimal>("InstallmentAmount")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("installment_amount");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
 
-                    b.Property<decimal>("InterestPaid")
+                    b.Property<int>("Days")
+                        .HasColumnType("int")
+                        .HasColumnName("days");
+
+                    b.Property<decimal>("ExtraordinaryPayment")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("interest_paid");
+                        .HasColumnName("extraordinary_payment");
+
+                    b.Property<int>("InstallmentNumber")
+                        .HasColumnType("int")
+                        .HasColumnName("installment_number");
+
+                    b.Property<decimal>("Interest")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("interest");
+
+                    b.Property<decimal>("LevelPaymentWithSVSD")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("level_payment_with_svds");
+
+                    b.Property<decimal>("LevelPaymentWithoutSVSD")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("level_payment_without_svds");
 
                     b.Property<Guid>("LoanId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("loan_id");
 
+                    b.Property<decimal>("OtherChargesSVSD")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("other_charges_svds");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("payment_date");
 
-                    b.Property<decimal>("PrincipalPaid")
+                    b.Property<decimal>("Principal")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("principal_paid");
+                        .HasColumnName("principal");
 
-                    b.Property<decimal>("RemainingBalance")
+                    b.Property<decimal>("PrincipalBalance")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("remaining_balance");
+                        .HasColumnName("principal_balance");
 
                     b.HasKey("Id");
 
@@ -67,38 +91,28 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
+                    b.Property<string>("IdentityNumber")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("identity_number");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
-                    b.ToTable("customers");
+                    b.ToTable("customers", "dbo");
                 });
 
             modelBuilder.Entity("LoanAPI.Database.Entities.LoanEntity", b =>
@@ -108,12 +122,13 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    b.Property<decimal>("CommissionRate")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("commission_rate");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CustomerEntityId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("customer_id");
 
                     b.Property<DateTime>("DisbursementDate")
                         .HasColumnType("datetime2")
@@ -123,10 +138,8 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("first_payment_date");
 
-                    b.Property<Guid>("IdentityNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("identity_number");
+                    b.Property<string>("IdentityNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("InterestRate")
                         .HasColumnType("decimal(18,2)")
@@ -136,19 +149,13 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("loan_amount");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("name");
-
                     b.Property<int>("Term")
                         .HasColumnType("int")
                         .HasColumnName("term");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerEntityId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("loans", "dbo");
                 });
@@ -166,9 +173,13 @@ namespace Examen_U2_POO_CarlosPineda.Migrations
 
             modelBuilder.Entity("LoanAPI.Database.Entities.LoanEntity", b =>
                 {
-                    b.HasOne("LoanAPI.Database.Entities.CustomerEntity", null)
+                    b.HasOne("LoanAPI.Database.Entities.CustomerEntity", "Customer")
                         .WithMany("Loans")
-                        .HasForeignKey("CustomerEntityId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("LoanAPI.Database.Entities.CustomerEntity", b =>

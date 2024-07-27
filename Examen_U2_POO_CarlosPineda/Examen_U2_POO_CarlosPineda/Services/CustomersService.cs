@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using LoanAPI.Database.Entities;
-using LoanAPI.Dtos.Customers;
 using LoanAPI.Services.Interfaces;
 using Examen_U2_POO_CarlosPineda.Dtos.Common;
 using Examen_U2_POO_CarlosPineda.Dtos.Customers;
 using LoanAPI.Database;
+using LoanAPI.DTOs;
 
 namespace LoanAPI.Services
 {
@@ -44,7 +44,7 @@ namespace LoanAPI.Services
                 {
                     StatusCode = 404,
                     Status = false,
-                    Message = "No se encontró el cliente"
+                    Message = "No se encontro el cliente"
                 };
             }
 
@@ -64,7 +64,6 @@ namespace LoanAPI.Services
             var customerEntity = _mapper.Map<CustomerEntity>(dto);
 
             _context.Customers.Add(customerEntity);
-
             await _context.SaveChangesAsync();
 
             var customerDto = _mapper.Map<CustomerDto>(customerEntity);
@@ -88,14 +87,12 @@ namespace LoanAPI.Services
                 {
                     StatusCode = 404,
                     Status = false,
-                    Message = "No se encontró el cliente"
+                    Message = "No se encontro el cliente"
                 };
             }
 
-            _mapper.Map<CustomerEditDto, CustomerEntity>(dto, customerEntity);
-
+            _mapper.Map(dto, customerEntity);
             _context.Customers.Update(customerEntity);
-
             await _context.SaveChangesAsync();
 
             var customerDto = _mapper.Map<CustomerDto>(customerEntity);
@@ -119,7 +116,7 @@ namespace LoanAPI.Services
                 {
                     StatusCode = 404,
                     Status = false,
-                    Message = "No se encontró el cliente"
+                    Message = "No se encontro el cliente"
                 };
             }
 
@@ -131,6 +128,35 @@ namespace LoanAPI.Services
                 StatusCode = 200,
                 Status = true,
                 Message = "Cliente eliminado correctamente"
+            };
+        }
+
+        // Pa traer al cliente con la info de su prestamo y amortizacion
+        public async Task<ResponseDto<CustomerDto>> GetCustomerWithLoansAndAmortizationAsync(Guid customerId)
+        {
+            var customerEntity = await _context.Customers
+                .Include(c => c.Loans)
+                .ThenInclude(l => l.AmortizationSchedule)
+                .FirstOrDefaultAsync(e => e.Id == customerId);
+
+            if (customerEntity == null)
+            {
+                return new ResponseDto<CustomerDto>
+                {
+                    StatusCode = 404,
+                    Status = false,
+                    Message = "No se encontro el cliente"
+                };
+            }
+
+            var customerDto = _mapper.Map<CustomerDto>(customerEntity);
+
+            return new ResponseDto<CustomerDto>
+            {
+                StatusCode = 200,
+                Status = true,
+                Message = "Cliente con prestamos y amortizaciones obtenido correctamente",
+                Data = customerDto
             };
         }
     }

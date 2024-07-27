@@ -1,22 +1,14 @@
-﻿using LoanAPI.Dtos.Loans;
-
-namespace LoanAPI.Dtos.Customers
+﻿namespace LoanAPI.DTOs
 {
     public class CustomerDto
     {
         public Guid Id { get; set; }
 
-        public string FirstName { get; set; }
+        public string Name { get; set; }
 
-        public string LastName { get; set; }
+        public string IdentityNumber { get; set; }
 
-        public string Email { get; set; }
-
-        public string PhoneNumber { get; set; }
-
-        public string Address { get; set; }
-
-        public DateTime DateOfBirth { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public IEnumerable<LoanDto> Loans { get; set; }
     }

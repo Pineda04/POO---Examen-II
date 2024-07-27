@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LoanAPI.Dtos.Loans;
 using LoanAPI.Services.Interfaces;
-using System;
-using System.Threading.Tasks;
 using Examen_U2_POO_CarlosPineda.Dtos.Common;
 using Examen_U2_POO_CarlosPineda.Dtos.Loans;
+using LoanAPI.DTOs;
 
 namespace LoanAPI.Controllers
 {
@@ -19,7 +17,7 @@ namespace LoanAPI.Controllers
             _loansService = loansService;
         }
 
-        // Traer todos los préstamos
+        // Obtener la lista de prestamos
         [HttpGet]
         public async Task<ActionResult<ResponseDto<List<LoanDto>>>> GetAll()
         {
@@ -27,15 +25,15 @@ namespace LoanAPI.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // Traer préstamo por ID de cliente
-        [HttpGet("client/{clientId}")]
-        public async Task<ActionResult<ResponseDto<LoanDto>>> GetByClientId(Guid clientId)
+        // Obtener un prestamo por nemero de identidad del cliente
+        [HttpGet("identity/{identityNumber}")]
+        public async Task<ActionResult<ResponseDto<LoanDto>>> GetByIdentityNumber(string identityNumber)
         {
-            var response = await _loansService.GetLoanByClientIdAsync(clientId);
+            var response = await _loansService.GetLoanByIdentityNumberAsync(identityNumber);
             return StatusCode(response.StatusCode, response);
         }
 
-        // Crear un nuevo préstamo
+        // Crear un nuevo prestamo
         [HttpPost]
         public async Task<ActionResult<ResponseDto<LoanDto>>> Create(LoanCreateDto dto)
         {
@@ -43,7 +41,7 @@ namespace LoanAPI.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // Editar un préstamo
+        // Editar un prestamo existente
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseDto<LoanDto>>> Edit(LoanEditDto dto, Guid id)
         {
@@ -51,11 +49,19 @@ namespace LoanAPI.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        // Eliminar un préstamo
+        // Eliminar un prestamo
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseDto<LoanDto>>> Delete(Guid id)
         {
             var response = await _loansService.DeleteAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        // Obtener un prestamo con el plan de amortizacion
+        [HttpGet("{loanId}/amortizations")]
+        public async Task<ActionResult<ResponseDto<LoanDto>>> GetLoanWithAmortization(Guid loanId)
+        {
+            var response = await _loansService.GetLoanWithAmortizationAsync(loanId);
             return StatusCode(response.StatusCode, response);
         }
     }

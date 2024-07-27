@@ -1,0 +1,24 @@
+meta {
+  name: CreateLoans
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{PATH}}/loans
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Prueba",
+    "identityNumber": "4010-2005-00123",
+    "loanAmount": 10000,
+    "commissionRate": 5,
+    "interestRate": 3,
+    "term": 10,
+    "disbursementDate": "2024-07-27T13:36:25.570Z",
+    "firstPaymentDate": "2024-07-27T13:36:25.570Z"
+  }
+}

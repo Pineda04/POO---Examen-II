@@ -1,4 +1,4 @@
-﻿namespace LoanAPI.Dtos.Loans
+﻿namespace LoanAPI.DTOs
 {
     public class LoanDto
     {
@@ -19,5 +19,9 @@
         public DateTime DisbursementDate { get; set; }
 
         public DateTime FirstPaymentDate { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public IEnumerable<AmortizationScheduleDto> AmortizationSchedule { get; set; }
     }
 }

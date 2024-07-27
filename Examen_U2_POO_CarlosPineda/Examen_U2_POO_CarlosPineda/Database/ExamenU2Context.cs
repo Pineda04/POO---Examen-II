@@ -1,16 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using LoanAPI.Database.Entities;
-using Examen_U2_POO_CarlosPineda.Services.Interfaces;
 
 namespace LoanAPI.Database
 {
     public class ExamenU2Context : DbContext
     {
-        private readonly IAuthService _authService;
-
-        public ExamenU2Context(DbContextOptions options, IAuthService authService) : base(options)
+        public ExamenU2Context(DbContextOptions<ExamenU2Context> options) : base(options)
         {
-            this._authService = authService;
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -25,14 +21,34 @@ namespace LoanAPI.Database
                 {
                     if (entry.State == EntityState.Added)
                     {
+                        
                     }
                     else if (entry.State == EntityState.Modified)
                     {
+                        
                     }
                 }
             }
 
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Configuración de las relaciones y restricciones
+            modelBuilder.Entity<LoanEntity>()
+                .HasMany(l => l.AmortizationSchedule)
+                .WithOne(a => a.Loan)
+                .HasForeignKey(a => a.LoanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CustomerEntity>()
+                .HasMany(c => c.Loans)
+                .WithOne(l => l.Customer)
+                .HasForeignKey(l => l.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<LoanEntity> Loans { get; set; }

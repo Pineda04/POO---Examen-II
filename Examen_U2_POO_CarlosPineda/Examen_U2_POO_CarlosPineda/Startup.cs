@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using Examen_U2_POO_CarlosPineda.Services.Interfaces;
-using Examen_U2_POO_CarlosPineda.Services;
 using LoanAPI.Helpers;
 using LoanAPI.Database;
 using LoanAPI.Services.Interfaces;
@@ -29,8 +27,6 @@ namespace ProyectoViajes.API
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // Add servicios de Agency
-            services.AddTransient<IAmortizationSchedulesService, AmortizationSchedulesService>();
-            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ICustomersService, CustomersService>();
             services.AddTransient<ILoansService, LoansService>();
 

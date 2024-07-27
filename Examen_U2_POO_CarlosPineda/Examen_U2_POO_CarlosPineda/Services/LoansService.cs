@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using LoanAPI.Database;
 using LoanAPI.Database.Entities;
-using LoanAPI.Dtos.Loans;
 using LoanAPI.Services.Interfaces;
 using Examen_U2_POO_CarlosPineda.Dtos.Common;
 using Examen_U2_POO_CarlosPineda.Dtos.Loans;
+using LoanAPI.Database;
+using LoanAPI.DTOs;
 
 namespace LoanAPI.Services
 {
@@ -16,28 +16,29 @@ namespace LoanAPI.Services
 
         public LoansService(ExamenU2Context context, IMapper mapper)
         {
-            _context = context;
-            _mapper = mapper;
+            this._context = context;
+            this._mapper = mapper;
         }
 
         public async Task<ResponseDto<List<LoanDto>>> GetLoansListAsync()
         {
-            var loansEntity = await _context.Loans.ToListAsync();
+            var loansEntity = await _context.Loans.Include(l => l.AmortizationSchedule).ToListAsync();
             var loansDtos = _mapper.Map<List<LoanDto>>(loansEntity);
 
             return new ResponseDto<List<LoanDto>>
             {
                 StatusCode = 200,
                 Status = true,
-                Message = "Lista de préstamos obtenida correctamente",
+                Message = "Lista de prestamos obtenida correctamente",
                 Data = loansDtos
             };
         }
 
-        public async Task<ResponseDto<LoanDto>> GetLoanByClientIdAsync(Guid clientId)
+        public async Task<ResponseDto<LoanDto>> GetLoanByIdentityNumberAsync(string identityNumber)
         {
             var loanEntity = await _context.Loans
-                .FirstOrDefaultAsync(e => e.IdentityNumber == clientId);
+                .Include(l => l.AmortizationSchedule)
+                .FirstOrDefaultAsync(e => e.IdentityNumber == identityNumber);
 
             if (loanEntity == null)
             {
@@ -45,7 +46,7 @@ namespace LoanAPI.Services
                 {
                     StatusCode = 404,
                     Status = false,
-                    Message = "Préstamo no encontrado"
+                    Message = "No se encontro el prestamo"
                 };
             }
 
@@ -55,7 +56,7 @@ namespace LoanAPI.Services
             {
                 StatusCode = 200,
                 Status = true,
-                Message = "Préstamo encontrado correctamente",
+                Message = "Prestamo encontrado correctamente",
                 Data = loanDto
             };
         }
@@ -63,10 +64,11 @@ namespace LoanAPI.Services
         public async Task<ResponseDto<LoanDto>> CreateAsync(LoanCreateDto dto)
         {
             var loanEntity = _mapper.Map<LoanEntity>(dto);
-
             _context.Loans.Add(loanEntity);
 
             await _context.SaveChangesAsync();
+
+            // Aqui voy a poner el calculo del plan de amortización
 
             var loanDto = _mapper.Map<LoanDto>(loanEntity);
 
@@ -74,14 +76,16 @@ namespace LoanAPI.Services
             {
                 StatusCode = 201,
                 Status = true,
-                Message = "Préstamo creado exitosamente",
+                Message = "Prestamo creado exitosamente",
                 Data = loanDto
             };
         }
 
         public async Task<ResponseDto<LoanDto>> EditAsync(LoanEditDto dto, Guid id)
         {
-            var loanEntity = await _context.Loans.FirstOrDefaultAsync(e => e.Id == id);
+            var loanEntity = await _context.Loans
+                .Include(l => l.AmortizationSchedule)
+                .FirstOrDefaultAsync(e => e.Id == id);
 
             if (loanEntity == null)
             {
@@ -89,15 +93,16 @@ namespace LoanAPI.Services
                 {
                     StatusCode = 404,
                     Status = false,
-                    Message = "Préstamo no encontrado"
+                    Message = "No se encontro el prestamo"
                 };
             }
 
             _mapper.Map(dto, loanEntity);
-
             _context.Loans.Update(loanEntity);
-
             await _context.SaveChangesAsync();
+
+            // Aqui tendria que volver a calcular la amortizacion
+            
 
             var loanDto = _mapper.Map<LoanDto>(loanEntity);
 
@@ -105,14 +110,16 @@ namespace LoanAPI.Services
             {
                 StatusCode = 200,
                 Status = true,
-                Message = "Préstamo modificado exitosamente",
+                Message = "Prestamo modificado exitosamente",
                 Data = loanDto
             };
         }
 
         public async Task<ResponseDto<LoanDto>> DeleteAsync(Guid id)
         {
-            var loanEntity = await _context.Loans.FirstOrDefaultAsync(e => e.Id == id);
+            var loanEntity = await _context.Loans
+                .Include(l => l.AmortizationSchedule)
+                .FirstOrDefaultAsync(e => e.Id == id);
 
             if (loanEntity == null)
             {
@@ -120,19 +127,54 @@ namespace LoanAPI.Services
                 {
                     StatusCode = 404,
                     Status = false,
-                    Message = "Préstamo no encontrado"
+                    Message = "No se encontro el prestamo"
                 };
             }
 
             _context.Loans.Remove(loanEntity);
+            _context.AmortizationSchedules.RemoveRange(loanEntity.AmortizationSchedule);
             await _context.SaveChangesAsync();
 
             return new ResponseDto<LoanDto>
             {
                 StatusCode = 200,
                 Status = true,
-                Message = "Préstamo eliminado correctamente"
+                Message = "Prestamo eliminado correctamente"
             };
         }
+
+        // Para traer el prestmo junto con su amortizacion
+        public async Task<ResponseDto<LoanDto>> GetLoanWithAmortizationAsync(Guid loanId)
+        {
+            var loanEntity = await _context.Loans
+                .Include(l => l.AmortizationSchedule)
+                .FirstOrDefaultAsync(e => e.Id == loanId);
+
+            if (loanEntity == null)
+            {
+                return new ResponseDto<LoanDto>
+                {
+                    StatusCode = 404,
+                    Status = false,
+                    Message = "No se encontro el prestamo"
+                };
+            }
+
+            var loanDto = _mapper.Map<LoanDto>(loanEntity);
+
+            return new ResponseDto<LoanDto>
+            {
+                StatusCode = 200,
+                Status = true,
+                Message = "Prestamo con plan de amortizacion obtenido correctamente",
+                Data = loanDto
+            };
+        }
+
+        /* Metodo para caulcular la amortizacón
+        private List<AmortizationScheduleEntity> CalculateAmortizationSchedule(LoanEntity loanEntity)
+        {
+            
+        }*/
     }
 }
